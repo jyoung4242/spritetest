@@ -11,6 +11,8 @@ export class Entity {
     .entity {
       position: absolute;
       transition: transform 0.25s;
+      border: 1px solid white;
+      pointer-events: none;
     }
   </style>
   <entity-layer class="entity" style="transform: translate3d(\${position.x}px,\${position.y}px, 0px); width: 32px; height: 32px;z-index:\${zindex}">

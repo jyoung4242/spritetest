@@ -3,25 +3,14 @@ import { Scene } from "../../_SqueletoECS/Scene";
 import { Vector } from "../../_SqueletoECS/Vector";
 import { Engine } from "@peasy-lib/peasy-engine";
 
-// Scene Systems
-/* *README*
-  You will import all your  ECS Systems here for this scene here
-  for example
-  import { MovementSystem } from "../Systems/Movement";
-  The camera is required, so we already included it for you
-  ... you're welcome ;)
-*/
+//Systems
 import { Camera, ICameraConfig } from "../../_SqueletoECS/Camera"; //this is in Squeleto library
-import { SpritesComp } from "../Components/sprites";
+import { animateSpriteSystem } from "../Systems/animateSprite";
+import { aimSystem } from "../Systems/aim";
 
 // Entities
 import { PlayerEntity } from "../Entities/player";
-/* *README*
-  You will import all your  ECS entities for this scene here
-  for example
-  import { MapEntity } from "../Entities/mapEntity";
-  import { DemoEntity } from "../Entities/demo";
-*/
+
 export class Test extends Scene {
   name: string = "test";
   entities: any = [];
@@ -39,16 +28,22 @@ export class Test extends Scene {
 
     this.entities.push(plr);
 
+    let anim = new animateSpriteSystem();
+    console.log(anim);
+
     //establish Scene Systems - Configuring Camera
     let cConfig: ICameraConfig = {
       name: "camera",
-      viewPortSystems: [],
+      viewPortSystems: [anim],
       gameEntities: this.entities,
       position: new Vector(0, 0),
       size: new Vector(400, 266.67),
     };
     let camera = Camera.create(cConfig);
     console.log(camera);
+
+    let aim = new aimSystem(camera);
+    camera.vpSystems.push(aim);
 
     //give the camera its systems to own
     //camera.vpSystems.push(new KeyboardSystem(), new MovementSystem());

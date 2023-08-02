@@ -6,7 +6,8 @@ import topsprite from "../Assets/uppersprite.png";
 import { Vector } from "../../_SqueletoECS/Vector";
 
 const walkAnimationSequence = {
-  frameRate: 150,
+  frameRate: 8,
+  default: "walk",
   sequences: {
     idle: [[0, 0]],
     walk: [

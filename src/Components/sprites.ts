@@ -2,13 +2,23 @@ import { Vector } from "../../_SqueletoECS/Vector";
 import { Component } from "../../_SqueletoECS/component";
 
 // you can define the incoming types when the component is created
+export type AnimationSequence = {
+  frameRate: number;
+  default: string;
+  sequences: IAnimSequence;
+};
+
+export interface IAnimSequence {
+  [key: string]: Array<Array<number>>;
+}
+
 export interface ISpritesComponent {
   data: SpritesType | Array<SpritesType>;
 }
 export type SpritesType = {
   src: string;
   size: Array<number>;
-  animation?: any;
+  animation?: AnimationSequence;
 };
 
 export type spriteObject = {
@@ -16,16 +26,17 @@ export type spriteObject = {
   size: Vector;
   position?: Vector;
   offset: Vector;
-  animationSequence?: string;
+  animationSequence?: AnimationSequence;
   frameIndex?: number;
   frameRate?: number;
   frameTik?: number;
   angle: number;
+  currentSequence?: string;
 };
 
 // this is the exported interface that is used in systems modules
 export interface SpritesComponent {
-  foo: SpritesType;
+  sprites: Array<spriteObject>;
 }
 
 // classes should have:
@@ -36,14 +47,16 @@ export class SpritesComp extends Component {
   // UI template string literal with UI binding of value property
   public template = `
     <style>
-      sprite-layers {
-      position: fixed;
-      top:50%;
-      left:50%;
-      transform: translate(-50%,-50%);
+      sprite-layer {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: block;
       }
     </style>
-    <sprite-layers \${sprite<=*sprites} style="width: \${sprite.size.x}px; height: \${sprite.size.x}px; top: \${sprite.offset.y};left: \${sprite.offset.x};background-image: url(\${sprite.src}); background-position: -\${sprite.position.x}px \${sprite.position.y}px; transform: rotate(\${sprite.angle}deg); "></sprite-layers>
+    <sprite-layers style="relative">
+      <sprite-layer \${sprite<=*value} style="width: \${sprite.size.x}px; height: \${sprite.size.x}px; top: \${sprite.offset.y};left: \${sprite.offset.x};background-image: url(\${sprite.src}); background-position: -\${sprite.position.x}px \${sprite.position.y}px; transform: rotate(\${sprite.angle}deg); "></sprite-layer>
+    </sprite-layers>
     `;
 
   //setting default value
@@ -76,6 +89,9 @@ export class SpritesComp extends Component {
         currentSprite.frameIndex = 0;
         currentSprite.frameRate = sprite.animation.frameRate;
         currentSprite.frameTik = 0;
+        currentSprite.position = new Vector(0, 0);
+        currentSprite.currentSequence = sprite.animation.default;
+      } else {
         currentSprite.position = new Vector(0, 0);
       }
       console.log(currentSprite);
