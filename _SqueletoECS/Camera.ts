@@ -18,6 +18,13 @@ export interface ICameraConfig {
 }
 
 export class Camera {
+  viewport: any;
+  get viewportScaling() {
+    if (window.innerWidth >= 1200) return 3;
+    else if (window.innerWidth < 1200) return 2;
+    else return 1;
+    return 3;
+  }
   lerpDelay: number = 0;
   lerpUpdateInterval: number = 100;
   lerpStartVector: Vector;
@@ -62,12 +69,14 @@ export class Camera {
       overflow: hidden;
     }
     viewport-inner{
+      pointer-events: none;
       display: block;
       position: relative;
       width: 100%;
       height: 100%;
     }
     camera-layer{
+      pointer-events: none;
       position: absolute;
       top:0;
       left: 0;
@@ -75,8 +84,8 @@ export class Camera {
     }
   </style>
 
-  <view-port class="viewport">
-        <viewport-inner>
+  <view-port class="viewport" \${==>viewport}>
+        <viewport-inner >
           <camera-layer style=" width: \${size.x}px;height: \${size.y}px; transform: translate3d(\${position.x}px, \${position.y}px, 0px);">
               < \${ entity === } \${ entity <=* entities }>
           </camera-layer>
@@ -109,7 +118,9 @@ export class Camera {
   }
 
   public update(deltaTime: number) {
-    this.vpSystems.forEach(vps => vps.update(deltaTime / 1000, 0, this.entities));
+    this.vpSystems.forEach(vps => {
+      vps.update(deltaTime / 1000, 0, this.entities);
+    });
     //camera position update
 
     if (this.cameraFocus.mode == "point") {
@@ -162,6 +173,10 @@ export class Camera {
         }
       }
     }
+  }
+
+  getViewport() {
+    return this.viewport;
   }
 
   //Camera System Methods
